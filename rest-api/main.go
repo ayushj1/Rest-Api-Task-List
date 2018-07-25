@@ -154,12 +154,22 @@ func DeleteList(w http.ResponseWriter, r *http.Request) {
   json.NewEncoder(w).Encode(queryResponse)
 }
 
-// main function to boot up everything
-func main() {
+// connect to db
+func dbConn() () {
     var err error
-    db, err = sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/restapi")
+    dbDriver := "mysql"
+    dbUser := "root"
+    dbPass := "root"
+    dbHost := "tcp(127.0.0.1:3306)"
+    dbName := "restapi"
+    db, err = sql.Open(dbDriver, dbUser+":"+dbPass+"@"+dbHost+"/"+dbName)
     logExitFatalError(err)
     log.Println("Connection Established")
+}
+
+// main function to boot up everything
+func main() {
+    dbConn()
     router := mux.NewRouter()
     router.HandleFunc("/list", CreateList).Methods("POST")
     router.HandleFunc("/list/{list_id}/task", CreateTask).Methods("POST")
