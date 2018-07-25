@@ -15,6 +15,35 @@ import (
 
 var db *sql.DB
 
+var createTableStatements = []string{
+	`CREATE DATABASE IF NOT EXISTS restapi;`,
+	`USE restapi;`,
+  `CREATE TABLE IF NOT EXISTS list (
+    id int(11) NOT NULL AUTO_INCREMENT,
+    name varchar(45) NOT NULL,
+    date_created datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+  );`,
+  `CREATE TABLE IF NOT EXISTS task (
+    id int(11) NOT NULL AUTO_INCREMENT,
+    list_id int(11) NOT NULL,
+    description varchar(45) NOT NULL,
+    date_created datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY list_id_idx (list_id),
+    CONSTRAINT list_id FOREIGN KEY (list_id) REFERENCES list (id) ON DELETE CASCADE
+  );`,
+  `CREATE TABLE IF NOT EXISTS task1 (
+    id int(11) NOT NULL AUTO_INCREMENT,
+    list_id int(11) NOT NULL,
+    description varchar(45) NOT NULL,
+    date_created datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY list_id_idx (list_id),
+    CONSTRAINT list_id FOREIGN KEY (list_id) REFERENCES list (id) ON DELETE CASCADE
+  );`,
+}
+
 // The List Type
 type List struct {
   Id int `json:"id,omitempty"`
@@ -167,9 +196,22 @@ func dbConn() () {
     log.Println("Connection Established")
 }
 
+// createTable creates the table, and if necessary, the database.
+func createTable() error {
+	for _, stmt := range createTableStatements {
+    log.Println(stmt)
+		_, err := db.Exec(stmt)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // main function to boot up everything
 func main() {
     dbConn()
+    createTable()
     router := mux.NewRouter()
     router.HandleFunc("/list", CreateList).Methods("POST")
     router.HandleFunc("/list/{list_id}/task", CreateTask).Methods("POST")
