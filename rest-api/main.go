@@ -33,15 +33,6 @@ var createTableStatements = []string{
     KEY list_id_idx (list_id),
     CONSTRAINT list_id FOREIGN KEY (list_id) REFERENCES list (id) ON DELETE CASCADE
   );`,
-  `CREATE TABLE IF NOT EXISTS task1 (
-    id int(11) NOT NULL AUTO_INCREMENT,
-    list_id int(11) NOT NULL,
-    description varchar(45) NOT NULL,
-    date_created datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    KEY list_id_idx (list_id),
-    CONSTRAINT list_id FOREIGN KEY (list_id) REFERENCES list (id) ON DELETE CASCADE
-  );`,
 }
 
 // The List Type
